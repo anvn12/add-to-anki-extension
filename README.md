@@ -138,6 +138,14 @@ Files structure:
 - `tts-generator.js` - TTS audio generation module
 - `styles.css` - Styling
 
+## Support the Project
+
+If you find this extension helpful, consider supporting its development:
+
+<a href="https://www.buymeacoffee.com/anvn12" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+Your support helps maintain and improve this extension!
+
 ## License
 
 Free to use and modify.
