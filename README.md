@@ -126,7 +126,7 @@ The extension uses Google Translate's TTS API for high-quality pronunciation aud
 - **Permissions**: contextMenus, storage, activeTab, scripting
 - **Host Permissions**: AnkiConnect (localhost:8765), Google Translate TTS API
 - **AnkiConnect API**: Version 6
-- **Audio Format**: MP3 (primary), WebM (fallback)
+- **Audio Format**: MP3
 
 ## Development
 
