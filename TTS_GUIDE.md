@@ -6,10 +6,11 @@ The Vocabulary to Anki extension now includes Text-to-Speech (TTS) functionality
 
 ## How It Works
 
-1. **Web Speech API**: Uses the browser's built-in speech synthesis
-2. **Audio Recording**: Captures the synthesized speech using MediaRecorder API
-3. **AnkiConnect Upload**: Stores the audio file in Anki's media collection
-4. **Card Integration**: Embeds audio reference `[sound:filename.webm]` in the card
+1. **Google TTS (Primary)**: Uses Google Translate's TTS API for high-quality MP3 audio
+2. **Web Speech API (Fallback)**: Falls back to browser's built-in speech synthesis if Google TTS fails
+3. **Audio Recording**: For fallback, captures the synthesized speech using MediaRecorder API
+4. **AnkiConnect Upload**: Stores the audio file in Anki's media collection
+5. **Card Integration**: Embeds audio reference `[sound:filename.mp3]` or `[sound:filename.webm]` in the card
 
 ## Supported Languages
 
@@ -36,11 +37,23 @@ The extension automatically detects the language based on character patterns:
 ## Technical Details
 
 ### Audio Format
-- **Format**: WebM with Opus codec
-- **Quality**: Browser default (typically good quality)
-- **File Size**: Usually 10-50 KB per word
+- **Primary Format**: MP3 (via Google TTS)
+  - High-quality natural pronunciation
+  - Fully compatible with Anki
+  - File size: ~10-30 KB per word
+- **Fallback Format**: WebM with Opus codec (via Web Speech API)
+  - Used when Google TTS is unavailable
+  - File size: ~10-50 KB per word
 
 ### API Endpoints Used
+
+#### Google TTS Endpoint
+```
+GET https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={text}
+```
+- Returns MP3 audio data
+- No API key required
+- Free public endpoint
 
 #### AnkiConnect - Store Media File
 ```json
@@ -48,7 +61,7 @@ The extension automatically detects the language based on character patterns:
   "action": "storeMediaFile",
   "version": 6,
   "params": {
-    "filename": "vocab_word_timestamp.webm",
+    "filename": "vocab_word_timestamp.mp3",
     "data": "base64_encoded_audio_data"
   }
 }
@@ -64,7 +77,7 @@ The extension automatically detects the language based on character patterns:
       "deckName": "Your Deck",
       "modelName": "Basic (and reversed card)",
       "fields": {
-        "Front": "word<br>[sound:vocab_word_timestamp.webm]",
+        "Front": "word<br>[sound:vocab_word_timestamp.mp3]",
         "Back": "translation"
       }
     }
@@ -115,20 +128,25 @@ speechSynthesis.getVoices().forEach(voice => {
 ## Troubleshooting
 
 ### Audio Not Generating
+- Check your internet connection (Google TTS requires internet)
 - Check browser console for errors
-- Ensure your browser supports Web Speech API
+- If Google TTS fails, extension will automatically fall back to Web Speech API
 - Try reloading the extension
 
 ### Poor Quality Audio
-- Different operating systems have different voice quality
-- Windows 10/11 has good quality voices
-- macOS has excellent voices
-- Linux voices may vary
+- Google TTS should provide consistently high quality across all platforms
+- If using fallback Web Speech API:
+  - Different operating systems have different voice quality
+  - Windows 10/11 has good quality voices
+  - macOS has excellent voices
+  - Linux voices may vary
 
 ### Audio Not Playing in Anki
-- Update to Anki 2.1.50 or later
+- MP3 format is fully supported by all recent Anki versions
+- Update to Anki 2.1.50 or later for best compatibility
 - Check Anki's media folder (Tools → Check Media)
 - Ensure audio isn't muted in Anki preferences
+- Look for `[sound:vocab_*.mp3]` tag in your card
 
 ## Advanced Features
 
@@ -160,13 +178,15 @@ for (const word of wordList) {
 
 ## Future Enhancements
 
+- [x] Integration with Google TTS API (Completed!)
 - [ ] Voice selection dropdown
 - [ ] Speed/pitch controls in UI
 - [ ] Support for phrases with pauses
 - [ ] Multiple pronunciation variants
-- [ ] Integration with external TTS APIs (Google Cloud TTS, Amazon Polly)
+- [ ] Integration with premium TTS APIs (Google Cloud TTS Pro, Amazon Polly, Azure TTS)
 - [ ] Audio quality presets
 - [ ] Bulk import with TTS generation
+- [ ] Offline audio generation support
 
 ## Credits
 

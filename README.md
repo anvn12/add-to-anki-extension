@@ -6,7 +6,7 @@ A Chrome extension that allows you to quickly add vocabulary words to Anki flash
 
 - 🎯 **Right-click context menu** - Select any text on a webpage and add it to Anki via context menu
 - 📝 **Quick popup interface** - Add words with translations and context
-- � **Text-to-Speech (TTS)** - Generate pronunciation audio for vocabulary using browser's speech synthesis
+- 🔊 **Text-to-Speech (TTS)** - Generate high-quality pronunciation audio using Google TTS with MP3 format
 - 🎵 **Audio playback** - Preview generated audio before adding to Anki
 - 🗂️ **Multiple note types** - Support for Basic, Basic (and reversed card), and Basic (type in the answer)
 - 🔄 **AnkiConnect integration** - Seamlessly communicates with Anki desktop app
@@ -72,17 +72,20 @@ Cards are created with:
 - **Back**: Translation/definition + optional context
 - **Tags**: `vocabulary`, `chrome-extension`, `tts` (if audio included)
 - **Model**: Selectable (Basic, Basic (and reversed card), or Basic (type in the answer))
-- **Audio**: WebM format, stored in Anki's media collection
+- **Audio**: MP3 format (via Google TTS), stored in Anki's media collection
 
 ## TTS (Text-to-Speech) Features
 
-The extension uses the browser's built-in Web Speech API to generate pronunciation audio:
+The extension uses Google Translate's TTS API for high-quality pronunciation audio:
 
+- **High-Quality Audio**: Uses Google TTS for natural-sounding pronunciation in MP3 format
+- **Anki-Compatible Format**: MP3 audio files work seamlessly with Anki's built-in player
 - **Automatic Language Detection**: Detects the language based on characters (supports 9+ languages)
 - **Audio Preview**: Test the pronunciation before adding to Anki
 - **Audio Storage**: Automatically uploads audio files to Anki's media collection
 - **Customizable**: Pronunciation field for phonetic notation (IPA, etc.)
-- **No API Keys Required**: Uses browser's native speech synthesis
+- **No API Keys Required**: Uses Google's free public TTS endpoint
+- **Fallback Support**: Falls back to browser's Web Speech API if Google TTS is unavailable
 
 ## Troubleshooting
 
@@ -97,13 +100,15 @@ The extension uses the browser's built-in Web Speech API to generate pronunciati
 
 **Audio Not Playing in Anki?**
 - Make sure you're using a recent version of Anki (2.1.50+)
-- Audio files are stored in WebM format, which is supported by Anki
+- Audio files are stored in MP3 format, which is fully supported by Anki
 - Try replaying the card or restarting Anki
+- Check that the audio file was successfully uploaded (look for [sound:vocab_*.mp3] in the card)
 
 **TTS Not Working?**
-- Make sure your browser supports Web Speech API (Chrome, Edge, Safari)
-- Check browser permissions for audio/microphone
-- Some voices may not be available depending on your OS
+- Check your internet connection (Google TTS requires internet access)
+- If Google TTS fails, the extension will fall back to browser's Web Speech API
+- For Web Speech API fallback: Make sure your browser supports it (Chrome, Edge, Safari)
+- Check browser permissions if using Web Speech API fallback
 
 **Note Type Not Found?**
 - Make sure the selected note type exists in Anki
@@ -119,7 +124,9 @@ The extension uses the browser's built-in Web Speech API to generate pronunciati
 
 - **Manifest Version**: 3
 - **Permissions**: contextMenus, storage, activeTab, scripting
+- **Host Permissions**: AnkiConnect (localhost:8765), Google Translate TTS API
 - **AnkiConnect API**: Version 6
+- **Audio Format**: MP3 (primary), WebM (fallback)
 
 ## Development
 
