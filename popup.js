@@ -156,7 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Upload audio to Anki if generated
       if (audioData && audioData.base64) {
         const timestamp = Date.now();
-        audioFileName = `vocab_${word.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.webm`;
+        const format = audioData.format || 'mp3';
+        audioFileName = `vocab_${word.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${format}`;
         
         showStatus('Uploading audio...', 'info');
         
@@ -176,6 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const mediaResult = await storeMediaResponse.json();
         if (mediaResult.error) {
           console.warn('Media upload warning:', mediaResult.error);
+          // Continue even if media upload has issues
+        } else {
+          showStatus('Audio uploaded successfully', 'info');
         }
       }
       
