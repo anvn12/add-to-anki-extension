@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Add to Anki</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Add Vocabulary to Anki</h2>
+    
+    <div id="status-message" class="status-message"></div>
+    
+    <form id="vocab-form">
+      <div class="form-group">
+        <label for="word">Word / Phrase:</label>
+        <input type="text" id="word" name="word" required placeholder="Enter word or phrase">
+      </div>
+      
+      <div class="form-group">
+        <label for="pronunciation">Pronunciation (optional):</label>
+        <div class="audio-controls">
+          <input type="text" id="pronunciation" name="pronunciation" placeholder="e.g., /həˈloʊ/">
+          <button type="button" id="generate-tts-btn" class="audio-btn" title="Generate pronunciation audio">
+            🔊 Generate Audio
+          </button>
+          <button type="button" id="play-audio-btn" class="audio-btn" style="display:none;" title="Play audio">
+            ▶️ Play
+          </button>
+        </div>
+        <div id="audio-status" class="audio-status"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="translation">Translation / Definition:</label>
+        <textarea id="translation" name="translation" rows="3" required placeholder="Enter translation or definition"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="context">Context (optional):</label>
+        <textarea id="context" name="context" rows="2" placeholder="Example sentence or context"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="deck">Anki Deck:</label>
+        <input type="text" id="deck" name="deck" value="Default" required placeholder="Deck name">
+      </div>
+      
+      <div class="form-group">
+        <label for="note-type">Note Type:</label>
+        <select id="note-type" name="note-type">
+          <option value="Basic">Basic</option>
+          <option value="Basic (and reversed card)">Basic (and reversed card)</option>
+          <option value="Basic (type in the answer)">Basic (type in the answer)</option>
+        </select>
+      </div>
+      
+      <div class="button-group">
+        <button type="submit" id="add-btn">Add to Anki</button>
+        <button type="button" id="get-selection-btn">Get Selected Text</button>
+      </div>
+    </form>
+    
+    <div class="settings">
+      <h3>Settings</h3>
+      <div class="form-group">
+        <label for="anki-url">AnkiConnect URL:</label>
+        <input type="text" id="anki-url" value="http://127.0.0.1:8765" placeholder="http://127.0.0.1:8765">
+      </div>
+      <button type="button" id="test-connection-btn">Test Connection</button>
+    </div>
+  </div>
+  
+  <script src="tts-generator.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
