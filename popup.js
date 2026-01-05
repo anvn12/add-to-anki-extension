@@ -34,6 +34,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const isExtended = noteTypeSelect.value === 'Basic Quizlet Extended';
     extendedFields.style.display = isExtended ? 'block' : 'none';
     
+    // Get the form fields
+    const wordField = document.getElementById('word');
+    const translationField = document.getElementById('translation');
+    const frontTextField = document.getElementById('front-text');
+    const backTextField = document.getElementById('back-text');
+    
+    // Toggle required attributes based on note type
+    if (isExtended) {
+      // Remove required from Basic fields
+      wordField.removeAttribute('required');
+      translationField.removeAttribute('required');
+      // Add required to Extended fields
+      frontTextField.setAttribute('required', 'required');
+      backTextField.setAttribute('required', 'required');
+    } else {
+      // Add required to Basic fields
+      wordField.setAttribute('required', 'required');
+      translationField.setAttribute('required', 'required');
+      // Remove required from Extended fields
+      frontTextField.removeAttribute('required');
+      backTextField.removeAttribute('required');
+    }
+    
     // Show/hide original fields based on note type
     const originalFields = ['word', 'pronunciation', 'translation', 'context'].map(id => 
       document.getElementById(id).closest('.form-group')
@@ -521,15 +544,13 @@ document.addEventListener('DOMContentLoaded', function() {
       const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
       tags.push('chrome-extension', 'quizlet-extended');
       
-      // Create the note fields object
+      // Create the note fields object - match Anki's field names exactly
       const noteFields = {
         FrontText: frontText,
         FrontAudio: frontAudioFileName ? `[sound:${frontAudioFileName}]` : '',
         BackText: backText,
         BackAudio: backAudioFileName ? `[sound:${backAudioFileName}]` : '',
-        Image: imageHTML,
-        'Add Reverse': addReverse ? '1' : '0',
-        Tags: tags.join(' ')
+        Tags: tagsInput || ''
       };
       
       const response = await fetch(ankiUrl, {
