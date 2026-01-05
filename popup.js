@@ -2,6 +2,8 @@
 
 let ttsGenerator = null;
 let audioData = null;
+let frontAudioData = null;
+let backAudioData = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('vocab-form');
@@ -15,8 +17,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const ankiUrlInput = document.getElementById('anki-url');
   const noteTypeSelect = document.getElementById('note-type');
   
+  // Extended fields elements
+  const extendedFields = document.getElementById('extended-fields');
+  const generateFrontAudioBtn = document.getElementById('generate-front-audio-btn');
+  const playFrontAudioBtn = document.getElementById('play-front-audio-btn');
+  const generateBackAudioBtn = document.getElementById('generate-back-audio-btn');
+  const playBackAudioBtn = document.getElementById('play-back-audio-btn');
+  const frontAudioStatus = document.getElementById('front-audio-status');
+  const backAudioStatus = document.getElementById('back-audio-status');
+  
   // Initialize TTS Generator
   ttsGenerator = new TTSGenerator();
+  
+  // Toggle extended fields visibility based on note type
+  noteTypeSelect.addEventListener('change', function() {
+    const isExtended = noteTypeSelect.value === 'Basic Quizlet Extended';
+    extendedFields.style.display = isExtended ? 'block' : 'none';
+    
+    // Show/hide original fields based on note type
+    const originalFields = ['word', 'pronunciation', 'translation', 'context'].map(id => 
+      document.getElementById(id).closest('.form-group')
+    );
+    originalFields.forEach(field => {
+      field.style.display = isExtended ? 'none' : 'block';
+    });
+    
+    // Show/hide original audio controls
+    if (generateTTSBtn.closest('.form-group')) {
+      generateTTSBtn.closest('.form-group').style.display = isExtended ? 'none' : 'block';
+    }
+  });
   
   // Load saved settings
   chrome.storage.sync.get(['ankiUrl', 'deckName', 'noteType'], function(result) {
@@ -28,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (result.noteType) {
       noteTypeSelect.value = result.noteType;
+      // Trigger change event to show/hide fields
+      noteTypeSelect.dispatchEvent(new Event('change'));
     }
   });
   
@@ -76,6 +108,110 @@ document.addEventListener('DOMContentLoaded', function() {
       showAudioStatus('Playing...', 'info');
     } catch (error) {
       showAudioStatus('Playback error', 'error');
+    }
+  });
+  
+  // Generate Front Audio for Extended format
+  generateFrontAudioBtn.addEventListener('click', async function() {
+    const frontText = document.getElementById('front-text').value.trim();
+    
+    if (!frontText) {
+      showFrontAudioStatus('Please enter front text first', 'error');
+      return;
+    }
+    
+    showFrontAudioStatus('Generating audio...', 'info');
+    generateFrontAudioBtn.disabled = true;
+    
+    try {
+      const lang = detectLanguage(frontText);
+      const tempGen = new TTSGenerator();
+      frontAudioData = await tempGen.generateAudio(frontText, {
+        lang: lang,
+        rate: 0.9,
+        pitch: 1
+      });
+      
+      showFrontAudioStatus('\u2713 Audio generated!', 'success');
+      playFrontAudioBtn.style.display = 'inline-block';
+      document.getElementById('front-audio').value = frontText;
+      
+    } catch (error) {
+      showFrontAudioStatus('Error: ' + error.message, 'error');
+      console.error('TTS Error:', error);
+    } finally {
+      generateFrontAudioBtn.disabled = false;
+    }
+  });
+  
+  // Play Front Audio
+  playFrontAudioBtn.addEventListener('click', async function() {
+    if (!frontAudioData) {
+      showFrontAudioStatus('No audio available', 'error');
+      return;
+    }
+    
+    try {
+      const tempGen = new TTSGenerator();
+      const blob = base64ToBlob(frontAudioData.base64, 'audio/mpeg');
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      await audio.play();
+      showFrontAudioStatus('Playing...', 'info');
+    } catch (error) {
+      showFrontAudioStatus('Playback error', 'error');
+    }
+  });
+  
+  // Generate Back Audio for Extended format
+  generateBackAudioBtn.addEventListener('click', async function() {
+    const backText = document.getElementById('back-text').value.trim();
+    
+    if (!backText) {
+      showBackAudioStatus('Please enter back text first', 'error');
+      return;
+    }
+    
+    showBackAudioStatus('Generating audio...', 'info');
+    generateBackAudioBtn.disabled = true;
+    
+    try {
+      const lang = detectLanguage(backText);
+      const tempGen = new TTSGenerator();
+      backAudioData = await tempGen.generateAudio(backText, {
+        lang: lang,
+        rate: 0.9,
+        pitch: 1
+      });
+      
+      showBackAudioStatus('\u2713 Audio generated!', 'success');
+      playBackAudioBtn.style.display = 'inline-block';
+      document.getElementById('back-audio').value = backText;
+      
+    } catch (error) {
+      showBackAudioStatus('Error: ' + error.message, 'error');
+      console.error('TTS Error:', error);
+    } finally {
+      generateBackAudioBtn.disabled = false;
+    }
+  });
+  
+  // Play Back Audio
+  playBackAudioBtn.addEventListener('click', async function() {
+    if (!backAudioData) {
+      showBackAudioStatus('No audio available', 'error');
+      return;
+    }
+    
+    try {
+      const tempGen = new TTSGenerator();
+      const blob = base64ToBlob(backAudioData.base64, 'audio/mpeg');
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      await audio.play();
+      showBackAudioStatus('Playing...', 'info');
+    } catch (error) {
+      showBackAudioStatus('Playback error', 'error');
     }
   });
   
@@ -131,13 +267,21 @@ document.addEventListener('DOMContentLoaded', function() {
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
+    const noteType = noteTypeSelect.value;
+    const deck = document.getElementById('deck').value.trim();
+    const ankiUrl = ankiUrlInput.value;
+    
+    // Handle Basic Quizlet Extended separately
+    if (noteType === 'Basic Quizlet Extended') {
+      await handleExtendedCardSubmit(deck, ankiUrl);
+      return;
+    }
+    
+    // Original card handling
     const word = document.getElementById('word').value.trim();
     const pronunciation = document.getElementById('pronunciation').value.trim();
     const translation = document.getElementById('translation').value.trim();
     const context = document.getElementById('context').value.trim();
-    const deck = document.getElementById('deck').value.trim();
-    const noteType = noteTypeSelect.value;
-    const ankiUrl = ankiUrlInput.value;
     
     if (!word || !translation) {
       showStatus('Please fill in word and translation', 'error');
@@ -267,6 +411,195 @@ document.addEventListener('DOMContentLoaded', function() {
   function showAudioStatus(message, type) {
     audioStatus.textContent = message;
     audioStatus.className = 'audio-status ' + type;
+  }
+  
+  function showFrontAudioStatus(message, type) {
+    frontAudioStatus.textContent = message;
+    frontAudioStatus.className = 'audio-status ' + type;
+  }
+  
+  function showBackAudioStatus(message, type) {
+    backAudioStatus.textContent = message;
+    backAudioStatus.className = 'audio-status ' + type;
+  }
+  
+  // Handle Extended Card Format submission
+  async function handleExtendedCardSubmit(deck, ankiUrl) {
+    const frontText = document.getElementById('front-text').value.trim();
+    const backText = document.getElementById('back-text').value.trim();
+    const imageUrl = document.getElementById('image-url').value.trim();
+    const addReverse = document.getElementById('add-reverse').checked;
+    const tagsInput = document.getElementById('tags-input').value.trim();
+    
+    if (!frontText || !backText) {
+      showStatus('Please fill in front text and back text', 'error');
+      return;
+    }
+    
+    showStatus('Adding to Anki...', 'info');
+    addBtn.disabled = true;
+    
+    // Save preferences
+    chrome.storage.sync.set({ deckName: deck, ankiUrl: ankiUrl, noteType: 'Basic Quizlet Extended' });
+    
+    try {
+      let frontAudioFileName = null;
+      let backAudioFileName = null;
+      
+      // Upload front audio if generated
+      if (frontAudioData && frontAudioData.base64) {
+        const timestamp = Date.now();
+        const format = frontAudioData.format || 'mp3';
+        frontAudioFileName = `front_audio_${timestamp}.${format}`;
+        
+        showStatus('Uploading front audio...', 'info');
+        
+        const storeMediaResponse = await fetch(ankiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'storeMediaFile',
+            version: 6,
+            params: {
+              filename: frontAudioFileName,
+              data: frontAudioData.base64
+            }
+          })
+        });
+        
+        const mediaResult = await storeMediaResponse.json();
+        if (mediaResult.error) {
+          console.warn('Front audio upload warning:', mediaResult.error);
+        }
+      }
+      
+      // Upload back audio if generated
+      if (backAudioData && backAudioData.base64) {
+        const timestamp = Date.now();
+        const format = backAudioData.format || 'mp3';
+        backAudioFileName = `back_audio_${timestamp}.${format}`;
+        
+        showStatus('Uploading back audio...', 'info');
+        
+        const storeMediaResponse = await fetch(ankiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'storeMediaFile',
+            version: 6,
+            params: {
+              filename: backAudioFileName,
+              data: backAudioData.base64
+            }
+          })
+        });
+        
+        const mediaResult = await storeMediaResponse.json();
+        if (mediaResult.error) {
+          console.warn('Back audio upload warning:', mediaResult.error);
+        }
+      }
+      
+      // Build the note fields
+      let frontHTML = frontText;
+      if (frontAudioFileName) {
+        frontHTML += `<br>[sound:${frontAudioFileName}]`;
+      }
+      
+      let backHTML = backText;
+      if (backAudioFileName) {
+        backHTML += `<br>[sound:${backAudioFileName}]`;
+      }
+      
+      // Add image if provided
+      let imageHTML = '';
+      if (imageUrl) {
+        imageHTML = `<img src=\"${imageUrl}\">`;
+      }
+      
+      // Parse tags
+      const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+      tags.push('chrome-extension', 'quizlet-extended');
+      
+      // Create the note fields object
+      const noteFields = {
+        FrontText: frontText,
+        FrontAudio: frontAudioFileName ? `[sound:${frontAudioFileName}]` : '',
+        BackText: backText,
+        BackAudio: backAudioFileName ? `[sound:${backAudioFileName}]` : '',
+        Image: imageHTML,
+        'Add Reverse': addReverse ? '1' : '0',
+        Tags: tags.join(' ')
+      };
+      
+      const response = await fetch(ankiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'addNote',
+          version: 6,
+          params: {
+            note: {
+              deckName: deck,
+              modelName: 'Basic Quizlet Extended',
+              fields: noteFields,
+              options: {
+                allowDuplicate: false
+              },
+              tags: tags
+            }
+          }
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.result) {
+        showStatus('\u2713 Successfully added to Anki!', 'success');
+        // Clear form
+        document.getElementById('front-text').value = '';
+        document.getElementById('front-audio').value = '';
+        document.getElementById('back-text').value = '';
+        document.getElementById('back-audio').value = '';
+        document.getElementById('image-url').value = '';
+        document.getElementById('add-reverse').checked = false;
+        document.getElementById('tags-input').value = '';
+        playFrontAudioBtn.style.display = 'none';
+        playBackAudioBtn.style.display = 'none';
+        frontAudioData = null;
+        backAudioData = null;
+        showFrontAudioStatus('', '');
+        showBackAudioStatus('', '');
+        
+        // Auto-close popup after 1.5 seconds
+        setTimeout(() => window.close(), 1500);
+      } else {
+        showStatus('\u2717 Error: ' + (data.error || 'Failed to add note'), 'error');
+      }
+    } catch (error) {
+      showStatus('\u2717 Connection error. Make sure Anki is running.', 'error');
+      console.error('Anki error:', error);
+    } finally {
+      addBtn.disabled = false;
+    }
+  }
+  
+  // Helper function to convert base64 to blob
+  function base64ToBlob(base64, mimeType) {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+    
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+    
+    return new Blob(byteArrays, { type: mimeType });
   }
   
   // Simple language detection based on character ranges

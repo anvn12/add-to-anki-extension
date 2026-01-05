@@ -52,7 +52,66 @@
           <option value="Basic">Basic</option>
           <option value="Basic (and reversed card)">Basic (and reversed card)</option>
           <option value="Basic (type in the answer)">Basic (type in the answer)</option>
+          <option value="Basic Quizlet Extended">Basic Quizlet Extended</option>
         </select>
+      </div>
+      
+      <!-- Extended fields for Basic Quizlet Extended -->
+      <div id="extended-fields" style="display:none;">
+        <div class="form-group">
+          <label for="front-text">Front Text:</label>
+          <textarea id="front-text" name="front-text" rows="2" placeholder="Front side text"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="front-audio">Front Audio (optional):</label>
+          <div class="audio-controls">
+            <input type="text" id="front-audio" name="front-audio" placeholder="Front audio text for TTS" readonly>
+            <button type="button" id="generate-front-audio-btn" class="audio-btn" title="Generate front audio">
+              🔊 Generate Front
+            </button>
+            <button type="button" id="play-front-audio-btn" class="audio-btn" style="display:none;" title="Play front audio">
+              ▶️ Play
+            </button>
+          </div>
+          <div id="front-audio-status" class="audio-status"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="back-text">Back Text:</label>
+          <textarea id="back-text" name="back-text" rows="2" placeholder="Back side text"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="back-audio">Back Audio (optional):</label>
+          <div class="audio-controls">
+            <input type="text" id="back-audio" name="back-audio" placeholder="Back audio text for TTS" readonly>
+            <button type="button" id="generate-back-audio-btn" class="audio-btn" title="Generate back audio">
+              🔊 Generate Back
+            </button>
+            <button type="button" id="play-back-audio-btn" class="audio-btn" style="display:none;" title="Play back audio">
+              ▶️ Play
+            </button>
+          </div>
+          <div id="back-audio-status" class="audio-status"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="image-url">Image URL (optional):</label>
+          <input type="text" id="image-url" name="image-url" placeholder="https://example.com/image.jpg">
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="add-reverse" name="add-reverse">
+            Add Reverse Card
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label for="tags-input">Tags (comma-separated):</label>
+          <input type="text" id="tags-input" name="tags-input" placeholder="e.g., vocabulary, spanish, verbs">
+        </div>
       </div>
       
       <div class="button-group">
