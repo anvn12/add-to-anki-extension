@@ -8,6 +8,9 @@ let backAudioData = null;
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('vocab-form');
   const addBtn = document.getElementById('add-btn');
+  const closeBtn = document.getElementById('close-btn');
+  const settingsBtn = document.getElementById('settings-btn');
+  const settingsSection = document.getElementById('settings-section');
   const getSelectionBtn = document.getElementById('get-selection-btn');
   const getSelectionBtnExtended = document.getElementById('get-selection-btn-extended');
   const testConnectionBtn = document.getElementById('test-connection-btn');
@@ -20,15 +23,21 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Extended fields elements
   const extendedFields = document.getElementById('extended-fields');
-  const generateFrontAudioBtn = document.getElementById('generate-front-audio-btn');
-  const playFrontAudioBtn = document.getElementById('play-front-audio-btn');
-  const generateBackAudioBtn = document.getElementById('generate-back-audio-btn');
-  const playBackAudioBtn = document.getElementById('play-back-audio-btn');
+  const autoRecordFrontBtn = document.getElementById('auto-record-front-btn');
+  const autoRecordBackBtn = document.getElementById('auto-record-back-btn');
   const frontAudioStatus = document.getElementById('front-audio-status');
   const backAudioStatus = document.getElementById('back-audio-status');
   
   // Initialize TTS Generator
   ttsGenerator = new TTSGenerator();
+  
+  // Toggle settings visibility
+  if (settingsBtn && settingsSection) {
+    settingsBtn.addEventListener('click', function() {
+      const isHidden = settingsSection.style.display === 'none' || !settingsSection.style.display;
+      settingsSection.style.display = isHidden ? 'block' : 'none';
+    });
+  }
   
   // Toggle extended fields visibility based on note type
   noteTypeSelect.addEventListener('change', function() {
@@ -135,7 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Generate Front Audio for Extended format
+  // Generate Front Audio for Extended format - OLD, now using auto-record buttons
+  /*
   generateFrontAudioBtn.addEventListener('click', async function() {
     const frontText = document.getElementById('front-text').value.trim();
     
@@ -219,8 +229,10 @@ document.addEventListener('DOMContentLoaded', function() {
       generateBackAudioBtn.disabled = false;
     }
   });
+  */
   
-  // Play Back Audio
+  // Play Back Audio - OLD, not needed with new design
+  /*
   playBackAudioBtn.addEventListener('click', async function() {
     if (!backAudioData) {
       showBackAudioStatus('No audio available', 'error');
@@ -238,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
       showBackAudioStatus('Playback error', 'error');
     }
   });
+  */
   
   // Get selected text from the active tab
   const getSelectedTextHandler = async function() {
@@ -271,6 +284,79 @@ document.addEventListener('DOMContentLoaded', function() {
   
   getSelectionBtn.addEventListener('click', getSelectedTextHandler);
   getSelectionBtnExtended.addEventListener('click', getSelectedTextHandler);
+  
+  // Close button handler
+  closeBtn.addEventListener('click', function() {
+    window.close();
+  });
+  
+  // Auto Record Front Audio button
+  if (autoRecordFrontBtn) {
+    autoRecordFrontBtn.addEventListener('click', async function() {
+      const frontText = document.getElementById('front-text').value.trim();
+      
+      if (!frontText) {
+        showFrontAudioStatus('Please enter front text first', 'error');
+        return;
+      }
+      
+      showFrontAudioStatus('Generating audio...', 'info');
+      autoRecordFrontBtn.disabled = true;
+      
+      try {
+        const lang = detectLanguage(frontText);
+        const tempGen = new TTSGenerator();
+        frontAudioData = await tempGen.generateAudio(frontText, {
+          lang: lang,
+          rate: 0.9,
+          pitch: 1
+        });
+        
+        showFrontAudioStatus('✓ Audio generated!', 'success');
+        document.getElementById('front-audio').value = frontText;
+        
+      } catch (error) {
+        showFrontAudioStatus('Error: ' + error.message, 'error');
+        console.error('TTS Error:', error);
+      } finally {
+        autoRecordFrontBtn.disabled = false;
+      }
+    });
+  }
+  
+  // Auto Record Back Audio button
+  if (autoRecordBackBtn) {
+    autoRecordBackBtn.addEventListener('click', async function() {
+      const backText = document.getElementById('back-text').value.trim();
+      
+      if (!backText) {
+        showBackAudioStatus('Please enter back text first', 'error');
+        return;
+      }
+      
+      showBackAudioStatus('Generating audio...', 'info');
+      autoRecordBackBtn.disabled = true;
+      
+      try {
+        const lang = detectLanguage(backText);
+        const tempGen = new TTSGenerator();
+        backAudioData = await tempGen.generateAudio(backText, {
+          lang: lang,
+          rate: 0.9,
+          pitch: 1
+        });
+        
+        showBackAudioStatus('✓ Audio generated!', 'success');
+        document.getElementById('back-audio').value = backText;
+        
+      } catch (error) {
+        showBackAudioStatus('Error: ' + error.message, 'error');
+        console.error('TTS Error:', error);
+      } finally {
+        autoRecordBackBtn.disabled = false;
+      }
+    });
+  }
   
   // Test AnkiConnect connection
   testConnectionBtn.addEventListener('click', async function() {
@@ -563,6 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
         FrontAudio: frontAudioFileName ? `[sound:${frontAudioFileName}]` : '',
         BackText: backText,
         BackAudio: backAudioFileName ? `[sound:${backAudioFileName}]` : '',
+        Image: imageUrl || '',
         Tags: tagsInput || ''
       };
       
@@ -596,10 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('back-text').value = '';
         document.getElementById('back-audio').value = '';
         document.getElementById('image-url').value = '';
-        document.getElementById('add-reverse').checked = false;
         document.getElementById('tags-input').value = '';
-        playFrontAudioBtn.style.display = 'none';
-        playBackAudioBtn.style.display = 'none';
         frontAudioData = null;
         backAudioData = null;
         showFrontAudioStatus('', '');

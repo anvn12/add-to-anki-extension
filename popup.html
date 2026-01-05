@@ -7,7 +7,19 @@
 </head>
 <body>
   <div class="container">
-    <h2>Add Vocabulary to Anki</h2>
+    <div class="header">
+      <h2>Vocab to Anki</h2>
+      <button type="button" id="settings-btn" class="settings-toggle-btn" title="Settings">⚙️</button>
+    </div>
+    
+    <div class="settings" id="settings-section" style="display:none;">
+      <h3>Settings</h3>
+      <div class="form-group">
+        <label for="anki-url">AnkiConnect URL:</label>
+        <input type="text" id="anki-url" value="http://127.0.0.1:8765" placeholder="http://127.0.0.1:8765">
+      </div>
+      <button type="button" id="test-connection-btn">Test Connection</button>
+    </div>
     
     <div id="status-message" class="status-message"></div>
     
@@ -29,22 +41,22 @@
         </div>
       </div>
       
-      <div class="form-group">
+      <div class="form-group field-with-button">
         <label for="word">Front:</label>
-        <div class="audio-controls">
+        <div class="field-button-wrapper">
           <input type="text" id="word" name="word" required placeholder="Enter front text">
-          <button type="button" id="get-selection-btn">Get Selected Text</button>
+          <button type="button" id="get-selection-btn" class="side-button">Get Selected Text</button>
         </div>
       </div>
       
-      <div class="form-group">
+      <div class="form-group field-with-button">
         <label for="pronunciation">Pronunciation (optional):</label>
-        <div class="audio-controls">
+        <div class="field-button-wrapper">
           <input type="text" id="pronunciation" name="pronunciation" placeholder="e.g., /həˈloʊ/">
-          <button type="button" id="generate-tts-btn" class="audio-btn" title="Generate pronunciation audio">
+          <button type="button" id="generate-tts-btn" class="side-button" title="Generate pronunciation audio">
             🔊 Generate Audio
           </button>
-          <button type="button" id="play-audio-btn" class="audio-btn" style="display:none;" title="Play audio">
+          <button type="button" id="play-audio-btn" class="side-button" style="display:none;" title="Play audio">
             ▶️ Play
           </button>
         </div>
@@ -63,78 +75,55 @@
       
       <!-- Extended fields for Basic Quizlet Extended -->
       <div id="extended-fields" style="display:none;">
-        <div class="form-group">
-          <label for="front-text">FrontText:</label>
-          <div class="audio-controls">
-            <textarea id="front-text" name="front-text" rows="3" placeholder="Front side text"></textarea>
-            <button type="button" id="get-selection-btn-extended" class="audio-btn">Get Selected Text</button>
+        <div class="form-group field-with-button">
+          <label for="front-text">Front Text:</label>
+          <div class="field-button-wrapper">
+            <textarea id="front-text" name="front-text" rows="3" placeholder=""></textarea>
+            <button type="button" id="get-selection-btn-extended" class="side-button">Get Selected Text</button>
           </div>
         </div>
         
-        <div class="form-group">
-          <label for="front-audio">FrontAudio:</label>
-          <div class="audio-controls">
-            <input type="text" id="front-audio" name="front-audio" placeholder="Front audio text for TTS" readonly>
-            <button type="button" id="generate-front-audio-btn" class="audio-btn" title="Generate front audio">
-              🔊 Generate
-            </button>
-            <button type="button" id="play-front-audio-btn" class="audio-btn" style="display:none;" title="Play front audio">
-              ▶️ Play
-            </button>
+        <div class="form-group field-with-button">
+          <label for="front-audio">Front Audio:</label>
+          <div class="field-button-wrapper">
+            <input type="text" id="front-audio" name="front-audio" placeholder="" readonly>
+            <button type="button" id="auto-record-front-btn" class="side-button" title="Auto record front audio">Auto record</button>
           </div>
           <div id="front-audio-status" class="audio-status"></div>
         </div>
         
-        <div class="form-group">
-          <label for="back-text">BackText:</label>
-          <textarea id="back-text" name="back-text" rows="3" placeholder="Back side text"></textarea>
+        <div class="form-group field-with-button">
+          <label for="back-text">Back Text:</label>
+          <div class="field-button-wrapper">
+            <textarea id="back-text" name="back-text" rows="3" placeholder=""></textarea>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label for="back-audio">BackAudio:</label>
-          <div class="audio-controls">
-            <input type="text" id="back-audio" name="back-audio" placeholder="Back audio text for TTS" readonly>
-            <button type="button" id="generate-back-audio-btn" class="audio-btn" title="Generate back audio">
-              🔊 Generate
-            </button>
-            <button type="button" id="play-back-audio-btn" class="audio-btn" style="display:none;" title="Play back audio">
-              ▶️ Play
-            </button>
+        <div class="form-group field-with-button">
+          <label for="back-audio">Back Audio:</label>
+          <div class="field-button-wrapper">
+            <input type="text" id="back-audio" name="back-audio" placeholder="" readonly>
+            <button type="button" id="auto-record-back-btn" class="side-button" title="Auto record back audio">Auto record</button>
           </div>
           <div id="back-audio-status" class="audio-status"></div>
         </div>
         
         <div class="form-group">
+          <label for="image-url">Image:</label>
+          <textarea id="image-url" name="image-url" rows="3" placeholder=""></textarea>
+        </div>
+        
+        <div class="form-group">
           <label for="tags-input">Tags:</label>
-          <input type="text" id="tags-input" name="tags-input" placeholder="e.g., vocabulary, spanish, verbs">
-        </div>
-        
-        <div class="form-group" style="display:none;">
-          <label for="image-url">Image URL (optional):</label>
-          <input type="text" id="image-url" name="image-url" placeholder="https://example.com/image.jpg">
-        </div>
-        
-        <div class="form-group" style="display:none;">
-          <label>
-            <input type="checkbox" id="add-reverse" name="add-reverse">
-            Add Reverse Card
-          </label>
+          <textarea id="tags-input" name="tags-input" rows="3" placeholder=""></textarea>
         </div>
       </div>
       
       <div class="button-group">
-        <button type="submit" id="add-btn">Add to Anki</button>
+        <button type="submit" id="add-btn">Add</button>
+        <button type="button" id="close-btn">Close</button>
       </div>
     </form>
-    
-    <div class="settings">
-      <h3>Settings</h3>
-      <div class="form-group">
-        <label for="anki-url">AnkiConnect URL:</label>
-        <input type="text" id="anki-url" value="http://127.0.0.1:8765" placeholder="http://127.0.0.1:8765">
-      </div>
-      <button type="button" id="test-connection-btn">Test Connection</button>
-    </div>
   </div>
   
   <script src="tts-generator.js"></script>

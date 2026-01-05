@@ -23,13 +23,43 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-  color: #333;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
-  font-size: 16px;
-  text-align: center;
   border-bottom: 2px solid #667eea;
   padding-bottom: 8px;
+}
+
+h2 {
+  color: #333;
+  margin: 0;
+  font-size: 16px;
+  flex: 1;
+}
+
+.settings-toggle-btn {
+  padding: 6px 10px;
+  font-size: 18px;
+  background: transparent;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex: none;
+  min-width: auto;
+}
+
+.settings-toggle-btn:hover {
+  background: #f0f0f0;
+  transform: rotate(90deg);
+  box-shadow: none;
+}
+
+.settings-toggle-btn:active {
+  transform: rotate(90deg) scale(0.95);
 }
 
 h3 {
@@ -164,7 +194,8 @@ select:focus {
   align-items: stretch;
 }
 
-.audio-controls input {
+.audio-controls input,
+.audio-controls textarea {
   flex: 1;
 }
 
@@ -174,6 +205,44 @@ select:focus {
   font-size: 13px;
   white-space: nowrap;
   min-width: auto;
+}
+
+/* New layout for fields with side buttons */
+.field-with-button {
+  position: relative;
+}
+
+.field-button-wrapper {
+  position: relative;
+  display: block;
+}
+
+.field-button-wrapper textarea,
+.field-button-wrapper input[type="text"] {
+  width: 100%;
+  padding-right: 160px;
+  box-sizing: border-box;
+}
+
+.side-button {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  height: auto;
+  z-index: 10;
+  flex: none;
+}
+
+.side-button + .side-button {
+  right: 135px;
+}
+
+.side-button:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
 }
 
 .audio-status {
@@ -204,7 +273,7 @@ select:focus {
 button {
   flex: 1;
   padding: 10px 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
   border: none;
   border-radius: 4px;
@@ -216,7 +285,7 @@ button {
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
 button:active {
@@ -230,12 +299,16 @@ button:disabled {
 }
 
 #get-selection-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+#close-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
 }
 
 #test-connection-btn {
   width: 100%;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   margin-top: 10px;
 }
 
