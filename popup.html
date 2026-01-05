@@ -31,7 +31,10 @@
       
       <div class="form-group">
         <label for="word">Front:</label>
-        <input type="text" id="word" name="word" required placeholder="Enter front text">
+        <div class="audio-controls">
+          <input type="text" id="word" name="word" required placeholder="Enter front text">
+          <button type="button" id="get-selection-btn">Get Selected Text</button>
+        </div>
       </div>
       
       <div class="form-group">
@@ -62,7 +65,10 @@
       <div id="extended-fields" style="display:none;">
         <div class="form-group">
           <label for="front-text">FrontText:</label>
-          <textarea id="front-text" name="front-text" rows="3" placeholder="Front side text"></textarea>
+          <div class="audio-controls">
+            <textarea id="front-text" name="front-text" rows="3" placeholder="Front side text"></textarea>
+            <button type="button" id="get-selection-btn-extended" class="audio-btn">Get Selected Text</button>
+          </div>
         </div>
         
         <div class="form-group">
@@ -118,7 +124,6 @@
       
       <div class="button-group">
         <button type="submit" id="add-btn">Add to Anki</button>
-        <button type="button" id="get-selection-btn">Get Selected Text</button>
       </div>
     </form>
     

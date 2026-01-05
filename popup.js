@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('vocab-form');
   const addBtn = document.getElementById('add-btn');
   const getSelectionBtn = document.getElementById('get-selection-btn');
+  const getSelectionBtnExtended = document.getElementById('get-selection-btn-extended');
   const testConnectionBtn = document.getElementById('test-connection-btn');
   const generateTTSBtn = document.getElementById('generate-tts-btn');
   const playAudioBtn = document.getElementById('play-audio-btn');
@@ -239,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Get selected text from the active tab
-  getSelectionBtn.addEventListener('click', async function() {
+  const getSelectedTextHandler = async function() {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       
@@ -266,7 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       showStatus('Error getting selection: ' + error.message, 'error');
     }
-  });
+  };
+  
+  getSelectionBtn.addEventListener('click', getSelectedTextHandler);
+  getSelectionBtnExtended.addEventListener('click', getSelectedTextHandler);
   
   // Test AnkiConnect connection
   testConnectionBtn.addEventListener('click', async function() {
