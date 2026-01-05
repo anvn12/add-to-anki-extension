@@ -12,35 +12,6 @@
     <div id="status-message" class="status-message"></div>
     
     <form id="vocab-form">
-      <div class="form-group">
-        <label for="word">Word / Phrase:</label>
-        <input type="text" id="word" name="word" required placeholder="Enter word or phrase">
-      </div>
-      
-      <div class="form-group">
-        <label for="pronunciation">Pronunciation (optional):</label>
-        <div class="audio-controls">
-          <input type="text" id="pronunciation" name="pronunciation" placeholder="e.g., /həˈloʊ/">
-          <button type="button" id="generate-tts-btn" class="audio-btn" title="Generate pronunciation audio">
-            🔊 Generate Audio
-          </button>
-          <button type="button" id="play-audio-btn" class="audio-btn" style="display:none;" title="Play audio">
-            ▶️ Play
-          </button>
-        </div>
-        <div id="audio-status" class="audio-status"></div>
-      </div>
-      
-      <div class="form-group">
-        <label for="translation">Translation / Definition:</label>
-        <textarea id="translation" name="translation" rows="3" required placeholder="Enter translation or definition"></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="context">Context (optional):</label>
-        <textarea id="context" name="context" rows="2" placeholder="Example sentence or context"></textarea>
-      </div>
-      
       <div class="form-row">
         <div class="form-group half-width">
           <label for="note-type">Type:</label>
@@ -58,19 +29,48 @@
         </div>
       </div>
       
+      <div class="form-group">
+        <label for="word">Front:</label>
+        <input type="text" id="word" name="word" required placeholder="Enter front text">
+      </div>
+      
+      <div class="form-group">
+        <label for="pronunciation">Pronunciation (optional):</label>
+        <div class="audio-controls">
+          <input type="text" id="pronunciation" name="pronunciation" placeholder="e.g., /həˈloʊ/">
+          <button type="button" id="generate-tts-btn" class="audio-btn" title="Generate pronunciation audio">
+            🔊 Generate Audio
+          </button>
+          <button type="button" id="play-audio-btn" class="audio-btn" style="display:none;" title="Play audio">
+            ▶️ Play
+          </button>
+        </div>
+        <div id="audio-status" class="audio-status"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="translation">Back:</label>
+        <textarea id="translation" name="translation" rows="3" required placeholder="Enter back text"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="context">Context (optional):</label>
+        <textarea id="context" name="context" rows="2" placeholder="Example sentence or context"></textarea>
+      </div>
+      
       <!-- Extended fields for Basic Quizlet Extended -->
       <div id="extended-fields" style="display:none;">
         <div class="form-group">
-          <label for="front-text">Front Text:</label>
-          <textarea id="front-text" name="front-text" rows="2" placeholder="Front side text"></textarea>
+          <label for="front-text">FrontText:</label>
+          <textarea id="front-text" name="front-text" rows="3" placeholder="Front side text"></textarea>
         </div>
         
         <div class="form-group">
-          <label for="front-audio">Front Audio (optional):</label>
+          <label for="front-audio">FrontAudio:</label>
           <div class="audio-controls">
             <input type="text" id="front-audio" name="front-audio" placeholder="Front audio text for TTS" readonly>
             <button type="button" id="generate-front-audio-btn" class="audio-btn" title="Generate front audio">
-              🔊 Generate Front
+              🔊 Generate
             </button>
             <button type="button" id="play-front-audio-btn" class="audio-btn" style="display:none;" title="Play front audio">
               ▶️ Play
@@ -80,16 +80,16 @@
         </div>
         
         <div class="form-group">
-          <label for="back-text">Back Text:</label>
-          <textarea id="back-text" name="back-text" rows="2" placeholder="Back side text"></textarea>
+          <label for="back-text">BackText:</label>
+          <textarea id="back-text" name="back-text" rows="3" placeholder="Back side text"></textarea>
         </div>
         
         <div class="form-group">
-          <label for="back-audio">Back Audio (optional):</label>
+          <label for="back-audio">BackAudio:</label>
           <div class="audio-controls">
             <input type="text" id="back-audio" name="back-audio" placeholder="Back audio text for TTS" readonly>
             <button type="button" id="generate-back-audio-btn" class="audio-btn" title="Generate back audio">
-              🔊 Generate Back
+              🔊 Generate
             </button>
             <button type="button" id="play-back-audio-btn" class="audio-btn" style="display:none;" title="Play back audio">
               ▶️ Play
@@ -99,20 +99,20 @@
         </div>
         
         <div class="form-group">
+          <label for="tags-input">Tags:</label>
+          <input type="text" id="tags-input" name="tags-input" placeholder="e.g., vocabulary, spanish, verbs">
+        </div>
+        
+        <div class="form-group" style="display:none;">
           <label for="image-url">Image URL (optional):</label>
           <input type="text" id="image-url" name="image-url" placeholder="https://example.com/image.jpg">
         </div>
         
-        <div class="form-group">
+        <div class="form-group" style="display:none;">
           <label>
             <input type="checkbox" id="add-reverse" name="add-reverse">
             Add Reverse Card
           </label>
-        </div>
-        
-        <div class="form-group">
-          <label for="tags-input">Tags (comma-separated):</label>
-          <input type="text" id="tags-input" name="tags-input" placeholder="e.g., vocabulary, spanish, verbs">
         </div>
       </div>
       
