@@ -41,19 +41,21 @@
         <textarea id="context" name="context" rows="2" placeholder="Example sentence or context"></textarea>
       </div>
       
-      <div class="form-group">
-        <label for="deck">Anki Deck:</label>
-        <input type="text" id="deck" name="deck" value="Default" required placeholder="Deck name">
-      </div>
-      
-      <div class="form-group">
-        <label for="note-type">Note Type:</label>
-        <select id="note-type" name="note-type">
-          <option value="Basic">Basic</option>
-          <option value="Basic (and reversed card)">Basic (and reversed card)</option>
-          <option value="Basic (type in the answer)">Basic (type in the answer)</option>
-          <option value="Basic Quizlet Extended">Basic Quizlet Extended</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="note-type">Type:</label>
+          <select id="note-type" name="note-type">
+            <option value="Basic">Basic</option>
+            <option value="Basic (and reversed card)">Basic (and reversed card)</option>
+            <option value="Basic (type in the answer)">Basic (type in the answer)</option>
+            <option value="Basic Quizlet Extended">Basic Quizlet Extended</option>
+          </select>
+        </div>
+        
+        <div class="form-group half-width">
+          <label for="deck">Deck:</label>
+          <input type="text" id="deck" name="deck" value="Default" required placeholder="Deck name">
+        </div>
       </div>
       
       <!-- Extended fields for Basic Quizlet Extended -->
