@@ -25,11 +25,11 @@ body {
 
 h2 {
   color: #333;
-  margin-bottom: 15px;
-  font-size: 22px;
+  margin-bottom: 10px;
+  font-size: 16px;
   text-align: center;
   border-bottom: 2px solid #667eea;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
 h3 {
@@ -87,12 +87,26 @@ h3 {
 .form-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.form-row input,
+.form-row select {
+  padding: 6px 8px;
+  font-size: 13px;
+  height: 32px;
+  box-sizing: border-box;
 }
 
 .form-group.half-width {
   flex: 1;
   margin-bottom: 0;
+  min-width: 0;
 }
 
 label {
