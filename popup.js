@@ -248,7 +248,16 @@ document.addEventListener('DOMContentLoaded', function() {
         func: () => window.getSelection().toString()
       }, (results) => {
         if (results && results[0] && results[0].result) {
-          document.getElementById('word').value = results[0].result.trim();
+          const selectedText = results[0].result.trim();
+          const noteType = noteTypeSelect.value;
+          
+          // Populate appropriate field based on note type
+          if (noteType === 'Basic Quizlet Extended') {
+            document.getElementById('front-text').value = selectedText;
+          } else {
+            document.getElementById('word').value = selectedText;
+          }
+          
           showStatus('Selected text captured!', 'success');
         } else {
           showStatus('No text selected', 'error');
